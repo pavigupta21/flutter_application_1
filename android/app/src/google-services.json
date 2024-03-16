@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "759119456955",
+    "project_id": "doubt-app-cba11",
+    "storage_bucket": "doubt-app-cba11.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:759119456955:android:fde7b5fd5787b79d72579e",
+        "android_client_info": {
+          "package_name": "com.example.flutter_application_1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMCN8WHCcqoHowRQMZ03eoBw-QN75hrTs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
