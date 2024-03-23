@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "759119456955",
-    "project_id": "doubt-app-cba11",
-    "storage_bucket": "doubt-app-cba11.appspot.com"
+    "project_number": "1034796668997",
+    "project_id": "askmentor-1fea6",
+    "storage_bucket": "askmentor-1fea6.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:759119456955:android:fde7b5fd5787b79d72579e",
+        "mobilesdk_app_id": "1:1034796668997:android:4601554aaa5d19a756eb2c",
         "android_client_info": {
-          "package_name": "com.example.flutter_application_1"
+          "package_name": "com.Doubt.flutter_application_1"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDMCN8WHCcqoHowRQMZ03eoBw-QN75hrTs"
+          "current_key": "AIzaSyCreXCNu80pYaHREY-hIPvZOjMq8oZax_M"
         }
       ],
       "services": {

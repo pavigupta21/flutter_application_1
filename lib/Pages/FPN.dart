@@ -75,9 +75,10 @@ class _ForgotPassState extends State<ForgotPassNew> {
                   // You can use the 'newPassword' and 'confirmNewPassword' variables as needed.
                 },
                 style: ElevatedButton.styleFrom(
-                  primary:
-                      Colors.blueAccent, // Set the button background color here
-                  onPrimary: Colors.white, // Set the text color here
+                  foregroundColor: Colors.blueAccent,
+                  // Set the button background color here
+                  disabledForegroundColor:
+                      Colors.white, // Set the text color here
                 ),
                 child: Text('Confirm'),
               ),

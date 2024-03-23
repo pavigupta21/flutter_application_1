@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'choice.dart';
 import 'FP.dart';
@@ -10,7 +11,9 @@ enum Choice {
   teacher,
 }
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -175,7 +178,7 @@ class _LoginPageState extends State<LoginPage> {
                   },
                   child: Text('Login'),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.white,
+                    foregroundColor: Colors.white,
                   ),
                 ),
                 SizedBox(height: height * 0.005),
@@ -199,7 +202,7 @@ class _LoginPageState extends State<LoginPage> {
                   },
                   child: Text('Create an account'),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.white,
+                    foregroundColor: Colors.white,
                   ),
                 ),
               ],

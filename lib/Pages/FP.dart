@@ -128,8 +128,8 @@ class _ForgotPassState extends State<ForgotPass> {
                 }
               },
               style: ElevatedButton.styleFrom(
-                primary: Colors.blueAccent,
-                onPrimary: Colors.white,
+                foregroundColor: Colors.blueAccent,
+                disabledForegroundColor: Colors.white,
               ),
               child: Text(
                 'Next',

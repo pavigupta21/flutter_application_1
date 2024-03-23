@@ -128,7 +128,7 @@ class _ResetPassState extends State<ResetPass> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Color.fromARGB(255, 218, 113, 113),
+                        foregroundColor: Color.fromARGB(255, 218, 113, 113),
                       ),
                       child: Text('Cancel'),
                     ),
