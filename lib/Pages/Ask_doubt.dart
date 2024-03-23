@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'Student_pg.dart';
 import 'Doubt_Hist.dart';
+import 'Chatbox.dart';
 
 void main() {
   runApp(Ask());
@@ -82,6 +83,10 @@ class _AskState extends State<Ask> {
             // "Next" button
             ElevatedButton(
               onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Chat()),
+                );
                 // Add your logic for the "Next" button
                 // It can navigate to the next screen or perform any other action
                 print('Next button pressed');
