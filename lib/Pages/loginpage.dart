@@ -1,4 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'choice.dart';
 import 'FP.dart';
@@ -9,21 +8,6 @@ import 'Teacher_pg.dart';
 enum Choice {
   student,
   teacher,
-}
-
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: LoginPage(),
-    );
-  }
 }
 
 class LoginPage extends StatefulWidget {
@@ -74,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 SizedBox(height: height * 0.1),
                 AnimatedOpacity(
-                  duration: Duration(seconds: 1),
+                  duration: Duration(seconds: 3),
                   opacity: _opacity,
                   child: Text(
                     "Let's get started...",
@@ -178,7 +162,7 @@ class _LoginPageState extends State<LoginPage> {
                   },
                   child: Text('Login'),
                   style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
+                    foregroundColor: Colors.black,
                   ),
                 ),
                 SizedBox(height: height * 0.005),
@@ -202,7 +186,7 @@ class _LoginPageState extends State<LoginPage> {
                   },
                   child: Text('Create an account'),
                   style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
+                    foregroundColor: Colors.black,
                   ),
                 ),
               ],

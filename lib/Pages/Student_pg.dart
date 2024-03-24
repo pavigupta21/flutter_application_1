@@ -3,10 +3,6 @@ import 'Ask_doubt.dart';
 import 'Doubt_Hist.dart';
 import 'loginpage.dart';
 
-void main() {
-  runApp(Doubt());
-}
-
 class Doubt extends StatefulWidget {
   const Doubt({super.key});
 

@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'choice.dart';
 import 'loginpage.dart';
 
-void main() {
-  runApp(const Student());
-}
-
 class Student extends StatefulWidget {
   const Student({Key? key}) : super(key: key);
 

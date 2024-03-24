@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'loginpage.dart';
 
-void main() {
-  runApp(Answer());
-}
-
 class Answer extends StatefulWidget {
   const Answer({Key? key}) : super(key: key);
 

@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'FPN.dart';
 
-void main() {
-  runApp(const ForgotPass());
-}
-
 class ForgotPass extends StatefulWidget {
   const ForgotPass({Key? key}) : super(key: key);
 

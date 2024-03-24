@@ -3,19 +3,6 @@ import 'Student_Reg.dart';
 import 'Teacher_Reg.dart';
 import 'loginpage.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Home(),
-    );
-  }
-}
-
 class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

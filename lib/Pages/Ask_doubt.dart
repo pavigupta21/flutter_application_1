@@ -3,10 +3,6 @@ import 'Student_pg.dart';
 import 'Doubt_Hist.dart';
 import 'Chatbox.dart';
 
-void main() {
-  runApp(Ask());
-}
-
 class Ask extends StatefulWidget {
   const Ask({Key? key}) : super(key: key);
 

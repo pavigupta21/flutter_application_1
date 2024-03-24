@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'loginpage.dart';
 
-void main() {
-  runApp(ResetPass());
-}
-
 class ResetPass extends StatefulWidget {
   const ResetPass({Key? key}) : super(key: key);
 

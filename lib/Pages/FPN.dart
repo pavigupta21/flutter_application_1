@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'loginpage.dart';
 
-void main() {
-  runApp(ForgotPassNew());
-}
-
 class ForgotPassNew extends StatefulWidget {
   const ForgotPassNew({Key? key}) : super(key: key);
 

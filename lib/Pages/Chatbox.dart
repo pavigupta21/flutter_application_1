@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'Ask_doubt.dart';
-
-void main() {
-  runApp(Chat());
-}
+import 'package:camera/camera.dart';
 
 class Chat extends StatefulWidget {
   const Chat({Key? key}) : super(key: key);
@@ -18,6 +15,12 @@ class _ChatState extends State<Chat> {
 
   @override
   Widget build(BuildContext context) {
+    var size;
+    var height;
+    var width;
+    size = MediaQuery.of(context).size;
+    height = size.height;
+    width = size.width;
     return Directionality(
       textDirection: TextDirection.ltr, // Change if needed
       child: Scaffold(
@@ -50,14 +53,14 @@ class _ChatState extends State<Chat> {
                   reverse: true, // Start from bottom
                   itemCount: _messages.length,
                   itemBuilder: (context, index) {
-                    return _buildMessageBubble(_messages[index]);
+                    return _buildMessageBubble(_messages[index], index);
                   },
                 ),
               ),
               Container(
                 color: Colors.white, // Background color for text input field
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: EdgeInsets.symmetric(horizontal: width * 0.01),
                   child: Row(
                     children: [
                       Expanded(
@@ -92,29 +95,39 @@ class _ChatState extends State<Chat> {
     );
   }
 
-  Widget _buildMessageBubble(String message) {
+  Widget _buildMessageBubble(String message, int index) {
+    var size = MediaQuery.of(context).size;
+    var height = size.height;
+    var width = size.width;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+      padding: EdgeInsets.symmetric(
+          horizontal: width * 0.05, vertical: height * 0.01),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.7,
-            ),
-            padding: EdgeInsets.all(12.0),
-            decoration: BoxDecoration(
-              color: Colors.blueAccent,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20.0),
-                topRight: Radius.circular(20.0),
-                bottomLeft: Radius.circular(20.0),
+          GestureDetector(
+            onLongPress: () {
+              _showDeleteDialog(context, index);
+            },
+            child: Container(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.7,
               ),
-            ),
-            child: Text(
-              message,
-              style: TextStyle(color: Colors.white),
+              padding: EdgeInsets.symmetric(
+                  horizontal: width * 0.05, vertical: height * 0.02),
+              decoration: BoxDecoration(
+                color: Colors.blueAccent,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20.0),
+                  topRight: Radius.circular(20.0),
+                  bottomLeft: Radius.circular(20.0),
+                ),
+              ),
+              child: Text(
+                message,
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ),
         ],
@@ -130,5 +143,38 @@ class _ChatState extends State<Chat> {
       });
       _textEditingController.clear();
     }
+  }
+
+  void _deleteMessage(int index) {
+    setState(() {
+      _messages.removeAt(index);
+    });
+  }
+
+  void _showDeleteDialog(BuildContext context, int index) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Delete Message"),
+          content: Text("Are you sure you want to delete this message?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                _deleteMessage(index);
+                Navigator.of(context).pop();
+              },
+              child: Text("Delete"),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

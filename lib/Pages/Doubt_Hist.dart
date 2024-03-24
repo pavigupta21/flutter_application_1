@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Pages/Student_pg.dart';
 import 'Ask_doubt.dart';
 
-void main() {
-  runApp(Hist());
-}
-
 class Hist extends StatefulWidget {
   const Hist({super.key});
 
