@@ -48,7 +48,7 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
     );
     _controller.forward(); // Start the animation
 
-    Timer(Duration(seconds: 8), () {
+    Timer(Duration(seconds: 7), () {
       if (!_disposed) {
         Navigator.pushReplacement(
           context,
