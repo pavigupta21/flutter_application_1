@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'Ask_doubt.dart';
-import 'package:camera/camera.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 
 class Chat extends StatefulWidget {
   const Chat({Key? key}) : super(key: key);
@@ -12,6 +15,8 @@ class Chat extends StatefulWidget {
 class _ChatState extends State<Chat> {
   final TextEditingController _textEditingController = TextEditingController();
   final List<String> _messages = [];
+  List<File> _images = [];
+  bool _showTextInput = true;
 
   @override
   Widget build(BuildContext context) {
@@ -29,14 +34,10 @@ class _ChatState extends State<Chat> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Ask()),
-              );
-              // Handle back button press
+              Navigator.pop(context);
             },
           ),
-          title: Text("Teacher's name"),
+          title: Text("Teacher's username"),
           automaticallyImplyLeading: false,
         ),
         body: Container(
@@ -57,41 +58,60 @@ class _ChatState extends State<Chat> {
                   },
                 ),
               ),
-              Container(
-                color: Colors.white, // Background color for text input field
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: width * 0.01),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _textEditingController,
-                          decoration: InputDecoration(
-                            hintText: 'Type your message...',
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.camera_alt_rounded),
-                        onPressed: () {
-                          // Handle camera icon press
-                        },
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.send),
-                        onPressed: () {
-                          _sendMessage(_textEditingController.text);
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              _showTextInput ? _buildTextInput() : _buildImageSendButton(),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTextInput() {
+    var width = MediaQuery.of(context).size.width;
+    return Container(
+      color: Colors.white, // Background color for text input field
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: width * 0.01),
+        child: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: _textEditingController,
+                decoration: InputDecoration(
+                  hintText: 'Type your message...',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ),
+            IconButton(
+              icon: Icon(Icons.camera_alt_rounded),
+              onPressed: () {
+                _pickImageFromCamera();
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.send),
+              onPressed: () {
+                _sendMessage(_textEditingController.text);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImageSendButton() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ElevatedButton(
+          onPressed: () {
+            _sendMessage('');
+          },
+          child: Text('Send Image'),
+        ),
+      ],
     );
   }
 
@@ -110,6 +130,11 @@ class _ChatState extends State<Chat> {
             onLongPress: () {
               _showDeleteDialog(context, index);
             },
+            onTap: () {
+              if (message.startsWith('Image: ')) {
+                _showImageDialog(message.substring('Image: '.length));
+              }
+            },
             child: Container(
               constraints: BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width * 0.7,
@@ -124,10 +149,7 @@ class _ChatState extends State<Chat> {
                   bottomLeft: Radius.circular(20.0),
                 ),
               ),
-              child: Text(
-                message,
-                style: TextStyle(color: Colors.white),
-              ),
+              child: _buildMessageContent(message),
             ),
           ),
         ],
@@ -135,11 +157,34 @@ class _ChatState extends State<Chat> {
     );
   }
 
+  Widget _buildMessageContent(String message) {
+    if (message.startsWith('Image: ')) {
+      String imagePath = message.substring('Image: '.length);
+      return Image.file(File(imagePath));
+    } else {
+      return Text(
+        message,
+        style: TextStyle(color: Colors.white),
+      );
+    }
+  }
+
   void _sendMessage(String message) {
-    if (message.isNotEmpty) {
+    if (message.isNotEmpty || _images.isNotEmpty) {
       setState(() {
-        _messages.insert(
-            0, message); // Insert at the beginning for ListView reverse
+        if (message.isNotEmpty) {
+          _messages.insert(
+              0, message); // Insert at the beginning for ListView reverse
+        }
+        if (_images.isNotEmpty) {
+          for (var image in _images) {
+            _messages.insert(0, 'Image: ${image.path}');
+          }
+          _images.clear();
+          _showTextInput = true;
+        } else {
+          _showTextInput = message.isNotEmpty;
+        }
       });
       _textEditingController.clear();
     }
@@ -173,6 +218,38 @@ class _ChatState extends State<Chat> {
               child: Text("Delete"),
             ),
           ],
+        );
+      },
+    );
+  }
+
+  Future<void> _pickImageFromCamera() async {
+    final returnImage =
+        await ImagePicker().pickImage(source: ImageSource.camera);
+    if (returnImage == null) return; // Return if no image is selected
+
+    setState(() {
+      _images.add(File(returnImage.path));
+      _showTextInput = false;
+    });
+  }
+
+  void _showImageDialog(String imagePath) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            child: PhotoView(
+              backgroundDecoration: BoxDecoration(color: Colors.transparent),
+              imageProvider: FileImage(File(imagePath)),
+              minScale: PhotoViewComputedScale.contained,
+              maxScale: PhotoViewComputedScale.contained * 2.0,
+              enableRotation: true,
+            ),
+          ),
         );
       },
     );
