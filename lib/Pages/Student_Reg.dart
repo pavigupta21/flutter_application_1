@@ -15,6 +15,8 @@ class _StudentState extends State<Student> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _registrationIDController = TextEditingController();
 
+  final _formkey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     var size;
@@ -50,69 +52,96 @@ class _StudentState extends State<Student> {
         backgroundColor: Colors.blueAccent,
         body: SingleChildScrollView(
           child: Center(
-            child: Column(
-              children: <Widget>[
-                SizedBox(height: height * 0.02),
-                Icon(Icons.person_4_rounded, size: width * 0.3),
-                SizedBox(height: height * 0.03),
-                Container(
-                  width: width * 0.8,
-                  child: TextField(
-                    controller: _nameController,
-                    decoration: InputDecoration(
-                      labelText: "Username",
-                      filled: true,
-                      fillColor: Colors.white,
+            child: Form(
+              key: _formkey,
+              child: Column(
+                children: <Widget>[
+                  SizedBox(height: height * 0.02),
+                  Icon(Icons.person_4_rounded, size: width * 0.3),
+                  SizedBox(height: height * 0.03),
+                  Container(
+                    width: width * 0.8,
+                    child: TextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Please enter Username";
+                        }
+                        return null;
+                      },
+                      controller: _nameController,
+                      decoration: InputDecoration(
+                        labelText: "Username",
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: height * 0.03),
-                Container(
-                  width: width * 0.8,
-                  child: TextField(
-                    controller: _phoneNumberController,
-                    decoration: InputDecoration(
-                      labelText: "Phone number",
-                      filled: true,
-                      fillColor: Colors.white,
+                  SizedBox(height: height * 0.03),
+                  Container(
+                    width: width * 0.8,
+                    child: TextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Please enter Phone number";
+                        }
+                        return null;
+                      },
+                      controller: _phoneNumberController,
+                      decoration: InputDecoration(
+                        labelText: "Phone number",
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: height * 0.03),
-                Container(
-                  width: width * 0.8,
-                  child: TextField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      labelText: "Email ID",
-                      filled: true,
-                      fillColor: Colors.white,
+                  SizedBox(height: height * 0.03),
+                  Container(
+                    width: width * 0.8,
+                    child: TextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Please enter Email ID";
+                        }
+                        return null;
+                      },
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                        labelText: "Email ID",
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: height * 0.03),
-                Container(
-                  width: width * 0.8,
-                  child: TextField(
-                    controller: _registrationIDController,
-                    decoration: InputDecoration(
-                      labelText: "Registration ID",
-                      filled: true,
-                      fillColor: Colors.white,
+                  SizedBox(height: height * 0.03),
+                  Container(
+                    width: width * 0.8,
+                    child: TextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Please enter Registration ID";
+                        }
+                        return null;
+                      },
+                      controller: _registrationIDController,
+                      decoration: InputDecoration(
+                        labelText: "Registration ID",
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: height * 0.02),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => LoginPage()),
-                    );
-                  },
-                  child: Text('Register'),
-                ),
-              ],
+                  SizedBox(height: height * 0.02),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginPage()),
+                      );
+                    },
+                    child: Text('Register'),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
