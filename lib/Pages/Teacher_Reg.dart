@@ -13,7 +13,7 @@ class _TeacherState extends State<Teacher> {
   TextEditingController _nameController = TextEditingController();
   TextEditingController _phoneNumberController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
-  TextEditingController _subjectController = TextEditingController();
+  String? _selectedSubject;
 
   @override
   Widget build(BuildContext context) {
@@ -29,13 +29,12 @@ class _TeacherState extends State<Teacher> {
         appBar: AppBar(
           title: SingleChildScrollView(
             // Wrap the title text widget with SingleChildScrollView
-            scrollDirection:
-                Axis.horizontal, // Set scroll direction to horizontal
+            scrollDirection: Axis.horizontal,
             child: Text(
               "Teacher's Registration Page",
-              // Update the title text here
               style: TextStyle(
-                  fontSize: width * 0.055), // Adjust font size if needed
+                fontSize: width * 0.055,
+              ),
             ),
           ),
           leading: Builder(
@@ -59,17 +58,68 @@ class _TeacherState extends State<Teacher> {
                 SizedBox(height: height * 0.02),
                 Icon(Icons.person_4_rounded, size: width * 0.3),
                 SizedBox(height: height * 0.02),
-                buildTextField("Name", _nameController,
-                    width: width * 0.8, height: height * 0.1),
+                Container(
+                  width: width * 0.8,
+                  height: height * 0.1,
+                  child: TextField(
+                    controller: _nameController,
+                    decoration: InputDecoration(
+                      labelText: 'Username',
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                  ),
+                ),
                 SizedBox(height: height * 0.03),
-                buildTextField("Phone number", _phoneNumberController,
-                    width: width * 0.8, height: height * 0.1),
+                Container(
+                  width: width * 0.8,
+                  height: height * 0.1,
+                  child: TextField(
+                    controller: _phoneNumberController,
+                    decoration: InputDecoration(
+                      labelText: 'Phone number',
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                  ),
+                ),
                 SizedBox(height: height * 0.03),
-                buildTextField("Email ID", _emailController,
-                    width: width * 0.8, height: height * 0.1),
+                Container(
+                  width: width * 0.8,
+                  height: height * 0.1,
+                  child: TextField(
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      labelText: 'Email ID',
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                  ),
+                ),
                 SizedBox(height: height * 0.03),
-                buildTextField("Subject you teach", _subjectController,
-                    width: width * 0.8, height: height * 0.1),
+                Container(
+                  width: width * 0.8,
+                  child: DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      labelText: 'Subject you teach',
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    value: _selectedSubject,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedSubject = newValue;
+                      });
+                    },
+                    items: <String>['EM', 'BXE', 'phy', 'chem']
+                        .map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ),
                 SizedBox(height: height * 0.02),
                 ElevatedButton(
                   onPressed: () {
@@ -83,22 +133,6 @@ class _TeacherState extends State<Teacher> {
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildTextField(String labelText, TextEditingController controller,
-      {double? width, double? height}) {
-    return Container(
-      width: width,
-      height: height,
-      child: TextField(
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: labelText,
-          filled: true,
-          fillColor: Colors.white,
         ),
       ),
     );

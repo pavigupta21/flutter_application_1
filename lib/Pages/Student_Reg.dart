@@ -23,23 +23,23 @@ class _StudentState extends State<Student> {
     size = MediaQuery.of(context).size;
     height = size.height;
     width = size.width;
+
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
           title: SingleChildScrollView(
-            // Wrap the title with SingleChildScrollView
             scrollDirection: Axis.horizontal,
             child: Text(
               "Student's Registration Page",
               style: TextStyle(
-                  fontSize: width * 0.055), // Adjust the font size as needed
+                fontSize: width * 0.055,
+              ),
             ),
           ),
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             color: Colors.black,
             onPressed: () {
-              // Handle back button press here
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => Home()),
@@ -55,17 +55,53 @@ class _StudentState extends State<Student> {
                 SizedBox(height: height * 0.02),
                 Icon(Icons.person_4_rounded, size: width * 0.3),
                 SizedBox(height: height * 0.03),
-                buildTextField("Name", _nameController,
-                    width: width * 0.8, height: height * 0.1),
+                Container(
+                  width: width * 0.8,
+                  child: TextField(
+                    controller: _nameController,
+                    decoration: InputDecoration(
+                      labelText: "Username",
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                  ),
+                ),
                 SizedBox(height: height * 0.03),
-                buildTextField("Phone number", _phoneNumberController,
-                    width: width * 0.8, height: height * 0.1),
+                Container(
+                  width: width * 0.8,
+                  child: TextField(
+                    controller: _phoneNumberController,
+                    decoration: InputDecoration(
+                      labelText: "Phone number",
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                  ),
+                ),
                 SizedBox(height: height * 0.03),
-                buildTextField("Email ID", _emailController,
-                    width: width * 0.8, height: height * 0.1),
+                Container(
+                  width: width * 0.8,
+                  child: TextField(
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      labelText: "Email ID",
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                  ),
+                ),
                 SizedBox(height: height * 0.03),
-                buildTextField("Registration ID", _registrationIDController,
-                    width: width * 0.8, height: height * 0.1),
+                Container(
+                  width: width * 0.8,
+                  child: TextField(
+                    controller: _registrationIDController,
+                    decoration: InputDecoration(
+                      labelText: "Registration ID",
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                  ),
+                ),
                 SizedBox(height: height * 0.02),
                 ElevatedButton(
                   onPressed: () {
@@ -79,22 +115,6 @@ class _StudentState extends State<Student> {
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildTextField(String labelText, TextEditingController controller,
-      {double? width, double? height}) {
-    return Container(
-      width: width,
-      height: height,
-      child: TextField(
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: labelText,
-          filled: true,
-          fillColor: Colors.white,
         ),
       ),
     );
