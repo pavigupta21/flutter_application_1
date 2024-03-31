@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'choice.dart';
 import 'loginpage.dart';
@@ -133,10 +134,15 @@ class _StudentState extends State<Student> {
                   SizedBox(height: height * 0.02),
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginPage()),
-                      );
+                      if (_formkey.currentState!.validate()) {
+                        print("Form is valid. Proceeding to login page.");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginPage()),
+                        );
+                      } else {
+                        print("Form validation failed.");
+                      }
                     },
                     child: Text('Register'),
                   ),

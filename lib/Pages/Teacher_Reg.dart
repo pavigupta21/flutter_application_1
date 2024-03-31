@@ -15,6 +15,8 @@ class _TeacherState extends State<Teacher> {
   TextEditingController _emailController = TextEditingController();
   String? _selectedSubject;
 
+  final _formkey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     var size;
@@ -53,84 +55,116 @@ class _TeacherState extends State<Teacher> {
         backgroundColor: Colors.blueAccent,
         body: SingleChildScrollView(
           child: Center(
-            child: Column(
-              children: <Widget>[
-                SizedBox(height: height * 0.02),
-                Icon(Icons.person_4_rounded, size: width * 0.3),
-                SizedBox(height: height * 0.02),
-                Container(
-                  width: width * 0.8,
-                  height: height * 0.1,
-                  child: TextField(
-                    controller: _nameController,
-                    decoration: InputDecoration(
-                      labelText: 'Username',
-                      filled: true,
-                      fillColor: Colors.white,
+            child: Form(
+              key: _formkey,
+              child: Column(
+                children: <Widget>[
+                  SizedBox(height: height * 0.02),
+                  Icon(Icons.person_4_rounded, size: width * 0.3),
+                  SizedBox(height: height * 0.02),
+                  Container(
+                    width: width * 0.8,
+                    height: height * 0.1,
+                    child: TextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Please enter Username";
+                        }
+                        return null;
+                      },
+                      controller: _nameController,
+                      decoration: InputDecoration(
+                        labelText: 'Username',
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: height * 0.03),
-                Container(
-                  width: width * 0.8,
-                  height: height * 0.1,
-                  child: TextField(
-                    controller: _phoneNumberController,
-                    decoration: InputDecoration(
-                      labelText: 'Phone number',
-                      filled: true,
-                      fillColor: Colors.white,
+                  SizedBox(height: height * 0.03),
+                  Container(
+                    width: width * 0.8,
+                    height: height * 0.1,
+                    child: TextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Please enter Phone number";
+                        }
+                        return null;
+                      },
+                      controller: _phoneNumberController,
+                      decoration: InputDecoration(
+                        labelText: 'Phone number',
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: height * 0.03),
-                Container(
-                  width: width * 0.8,
-                  height: height * 0.1,
-                  child: TextField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      labelText: 'Email ID',
-                      filled: true,
-                      fillColor: Colors.white,
+                  SizedBox(height: height * 0.03),
+                  Container(
+                    width: width * 0.8,
+                    height: height * 0.1,
+                    child: TextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Please enter Email ID";
+                        }
+                        return null;
+                      },
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                        labelText: 'Email ID',
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: height * 0.03),
-                Container(
-                  width: width * 0.8,
-                  child: DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                      labelText: 'Subject you teach',
-                      filled: true,
-                      fillColor: Colors.white,
+                  SizedBox(height: height * 0.03),
+                  Container(
+                    width: width * 0.8,
+                    child: DropdownButtonFormField<String>(
+                      decoration: InputDecoration(
+                        labelText: 'Subject you teach',
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                      value: _selectedSubject,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedSubject = newValue;
+                        });
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please choose a subject';
+                        }
+                        return null;
+                      },
+                      items: <String>['EM', 'BXE', 'phy', 'chem']
+                          .map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
                     ),
-                    value: _selectedSubject,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedSubject = newValue;
-                      });
+                  ),
+                  SizedBox(height: height * 0.02),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (_formkey.currentState!.validate()) {
+                        print("Form is valid. Proceeding to login page.");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginPage()),
+                        );
+                      } else {
+                        print("Form validation failed.");
+                      }
                     },
-                    items: <String>['EM', 'BXE', 'phy', 'chem']
-                        .map((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
+                    child: Text('Register'),
                   ),
-                ),
-                SizedBox(height: height * 0.02),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => LoginPage()),
-                    );
-                  },
-                  child: Text('Register'),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
