@@ -197,6 +197,12 @@ class _LoginPageState extends State<LoginPage> {
                                 MaterialPageRoute(
                                     builder: (context) => Answer()),
                               );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text("Account does not exist"),
+                                ),
+                              );
                             }
                           } else {
                             print("Form validation failed.");

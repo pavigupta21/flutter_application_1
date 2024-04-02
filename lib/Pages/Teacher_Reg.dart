@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'choice.dart';
 import 'loginpage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,6 +30,32 @@ class _TeacherState extends State<Teacher> {
       try {
         UserCredential userCredential = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: EmailID, password: Password);
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userCredential.user!.uid)
+            .set({
+          'username': Username,
+          'phoneNumber': Phonenumber,
+          'email': EmailID,
+          'role': 'teacher', // Set role here
+          'subject': Subjectyouteach
+        }); // Added closing parenthesis here
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Registered successfully"),
+          ),
+        );
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => LoginPage()));
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'email-already-in-use') {
+          // If email already in use, show snackbar
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Account already exists"),
+            ),
+          );
+        }
       } catch (e) {
         print("Error occurred: $e");
         // Handle error
@@ -152,7 +179,7 @@ class _TeacherState extends State<Teacher> {
                         }
                         return null;
                       },
-                      controller: _emailController,
+                      controller: _passwordController,
                       decoration: InputDecoration(
                         labelText: 'Password',
                         filled: true,
@@ -194,7 +221,14 @@ class _TeacherState extends State<Teacher> {
                   ElevatedButton(
                     onPressed: () {
                       if (_formkey.currentState!.validate()) {
-                        print("Form is valid. Proceeding to login page.");
+                        setState(() {
+                          EmailID = _emailController.text;
+                          Username = _nameController.text;
+                          Password = _passwordController.text;
+                          Phonenumber = _phoneNumberController.text;
+                          Subjectyouteach = _selectedSubject ?? '';
+                        });
+
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => LoginPage()),
@@ -202,6 +236,7 @@ class _TeacherState extends State<Teacher> {
                       } else {
                         print("Form validation failed.");
                       }
+                      registration();
                     },
                     child: Text('Register'),
                   ),
