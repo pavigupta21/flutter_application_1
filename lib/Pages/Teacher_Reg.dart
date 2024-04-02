@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'choice.dart';
 import 'loginpage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Teacher extends StatefulWidget {
   const Teacher({Key? key}) : super(key: key);
@@ -10,12 +11,30 @@ class Teacher extends StatefulWidget {
 }
 
 class _TeacherState extends State<Teacher> {
+  String Username = "",
+      Phonenumber = "",
+      EmailID = "",
+      Password = "",
+      Subjectyouteach = "";
   TextEditingController _nameController = TextEditingController();
   TextEditingController _phoneNumberController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
   String? _selectedSubject;
 
   final _formkey = GlobalKey<FormState>();
+
+  registration() async {
+    if (Password != null) {
+      try {
+        UserCredential userCredential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(email: EmailID, password: Password);
+      } catch (e) {
+        print("Error occurred: $e");
+        // Handle error
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,6 +132,29 @@ class _TeacherState extends State<Teacher> {
                       controller: _emailController,
                       decoration: InputDecoration(
                         labelText: 'Email ID',
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: height * 0.03),
+                  Container(
+                    width: width * 0.8,
+                    height: height * 0.1,
+                    child: TextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Please enter Password";
+                        } else if (value.length < 8) {
+                          return "Password must be at least 8 characters long";
+                        } else if (!RegExp(r'\d').hasMatch(value)) {
+                          return "Password must have at least 1 no.";
+                        }
+                        return null;
+                      },
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                        labelText: 'Password',
                         filled: true,
                         fillColor: Colors.white,
                       ),

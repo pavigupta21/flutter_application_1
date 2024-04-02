@@ -11,12 +11,25 @@ class Student extends StatefulWidget {
 }
 
 class _StudentState extends State<Student> {
+  String Username = "", Phonenumber = "", EmailID = "", Password = "";
   TextEditingController _nameController = TextEditingController();
   TextEditingController _phoneNumberController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
-  TextEditingController _registrationIDController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
 
   final _formkey = GlobalKey<FormState>();
+
+  registration() async {
+    if (Password != null) {
+      try {
+        UserCredential userCredential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(email: EmailID, password: Password);
+      } catch (e) {
+        print("Error occurred: $e");
+        // Handle error
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,13 +132,17 @@ class _StudentState extends State<Student> {
                     child: TextFormField(
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return "Please enter Registration ID";
+                          return "Please enter Password";
+                        } else if (value.length < 8) {
+                          return "Password must be at least 8 characters long";
+                        } else if (!RegExp(r'\d').hasMatch(value)) {
+                          return "Password must have at least 1 no.";
                         }
                         return null;
                       },
-                      controller: _registrationIDController,
+                      controller: _passwordController,
                       decoration: InputDecoration(
-                        labelText: "Registration ID",
+                        labelText: "Password",
                         filled: true,
                         fillColor: Colors.white,
                       ),
