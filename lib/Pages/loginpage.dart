@@ -5,6 +5,7 @@ import 'RP.dart';
 import 'Student_pg.dart';
 import 'Teacher_pg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum Choice {
   student,
@@ -139,64 +140,78 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       SizedBox(height: height * 0.005),
-                      Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Login as:',
-                                style: TextStyle(
-                                  fontSize: width * 0.04,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Radio(
-                                value: Choice.student,
-                                groupValue: _selectedRole,
-                                onChanged: (Choice? value) {
-                                  setState(() {
-                                    _selectedRole = value;
-                                  });
-                                },
-                              ),
-                              Text('Student'),
-                              SizedBox(width: width * 0.04),
-                              Radio(
-                                value: Choice.teacher,
-                                groupValue: _selectedRole,
-                                onChanged: (Choice? value) {
-                                  setState(() {
-                                    _selectedRole = value;
-                                  });
-                                },
-                              ),
-                              Text('Teacher'),
-                            ],
-                          ),
-                        ],
-                      ),
                       ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           if (_formkey.currentState!.validate()) {
                             print("Form is valid. Proceeding to login page.");
                             if (_selectedRole == Choice.student) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Doubt()),
-                              );
+                              // Check if user exists in Firestore and if password matches
+                              try {
+                                final userDoc = await FirebaseFirestore.instance
+                                    .collection('students')
+                                    .doc(_nameController.text)
+                                    .get();
+                                if (userDoc.exists) {
+                                  final userData = userDoc.data();
+                                  final storedPassword = userData?['password'];
+                                  if (storedPassword ==
+                                      _passwordController.text) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Doubt()),
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text("Incorrect password"),
+                                      ),
+                                    );
+                                  }
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text("Username not found"),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                print("Error occurred: $e");
+                              }
                             } else if (_selectedRole == Choice.teacher) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Answer()),
-                              );
+                              // Similar checks for teacher role
+                              try {
+                                final userDoc = await FirebaseFirestore.instance
+                                    .collection('teachers')
+                                    .doc(_nameController.text)
+                                    .get();
+                                if (userDoc.exists) {
+                                  final userData = userDoc.data();
+                                  final storedPassword = userData?['password'];
+                                  if (storedPassword ==
+                                      _passwordController.text) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Answer()),
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text("Incorrect password"),
+                                      ),
+                                    );
+                                  }
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text("Username not found"),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                print("Error occurred: $e");
+                              }
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
