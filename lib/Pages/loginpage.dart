@@ -148,7 +148,7 @@ class _LoginPageState extends State<LoginPage> {
                               // Check if user exists in Firestore and if password matches
                               try {
                                 final userDoc = await FirebaseFirestore.instance
-                                    .collection('students')
+                                    .collection('users')
                                     .doc(_nameController.text)
                                     .get();
                                 if (userDoc.exists) {
@@ -182,7 +182,7 @@ class _LoginPageState extends State<LoginPage> {
                               // Similar checks for teacher role
                               try {
                                 final userDoc = await FirebaseFirestore.instance
-                                    .collection('teachers')
+                                    .collection('users')
                                     .doc(_nameController.text)
                                     .get();
                                 if (userDoc.exists) {
