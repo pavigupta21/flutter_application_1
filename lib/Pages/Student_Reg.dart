@@ -26,7 +26,7 @@ class _StudentState extends State<Student> {
         UserCredential userCredential = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: EmailID, password: Password);
         await FirebaseFirestore.instance
-            .collection('users')
+            .collection('students')
             .doc(userCredential.user!.uid)
             .set({
           'username': Username,

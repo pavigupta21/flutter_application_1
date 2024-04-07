@@ -27,9 +27,8 @@ class _LoginPageState extends State<LoginPage> {
   registration() async {
     if (password != null) {
       try {
-        UserCredential userCredential = await FirebaseAuth.instance
-            .createUserWithEmailAndPassword(
-                email: username, password: password);
+        if (FirebaseAuth.instance.currentUser != null)
+          print(FirebaseAuth.instance.currentUser?.uid);
       } catch (e) {
         print("Error occurred: $e");
         // Handle error
@@ -148,7 +147,7 @@ class _LoginPageState extends State<LoginPage> {
                               // Check if user exists in Firestore and if password matches
                               try {
                                 final userDoc = await FirebaseFirestore.instance
-                                    .collection('users')
+                                    .collection('students')
                                     .doc(_nameController.text)
                                     .get();
                                 if (userDoc.exists) {
@@ -182,7 +181,7 @@ class _LoginPageState extends State<LoginPage> {
                               // Similar checks for teacher role
                               try {
                                 final userDoc = await FirebaseFirestore.instance
-                                    .collection('users')
+                                    .collection('teachers')
                                     .doc(_nameController.text)
                                     .get();
                                 if (userDoc.exists) {

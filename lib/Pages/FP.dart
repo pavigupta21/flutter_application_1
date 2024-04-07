@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'FPN.dart';
 
 class ForgotPass extends StatefulWidget {
@@ -9,11 +10,13 @@ class ForgotPass extends StatefulWidget {
 }
 
 class _ForgotPassState extends State<ForgotPass> {
-  String username = "", answer = "";
+  String username = "";
+  String answer = "";
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _answerController = TextEditingController();
   String _selectedItem = 'Who is your favourite author?';
-  final _formkey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     var size;
@@ -24,10 +27,10 @@ class _ForgotPassState extends State<ForgotPass> {
     width = size.width;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Forgot Password?"),
+        title: const Text("Forgot Password?"),
         backgroundColor: Colors.blueAccent,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -35,7 +38,7 @@ class _ForgotPassState extends State<ForgotPass> {
       ),
       body: SingleChildScrollView(
         child: Form(
-          key: _formkey,
+          key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -124,18 +127,20 @@ class _ForgotPassState extends State<ForgotPass> {
               SizedBox(height: height * 0.03),
               ElevatedButton(
                 onPressed: () {
-                  if (_selectedItem.isNotEmpty &&
-                      _answerController.text.isNotEmpty) {
+                  if (_formKey.currentState!.validate()) {
+                    setState(() {
+                      username = _usernameController.text;
+                      answer = _answerController.text;
+                    });
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => ForgotPassNew()),
                     );
-                    String username = _usernameController.text;
-                    String selectedItem = _selectedItem;
-                    String answer = _answerController.text;
                     // You can use the variables as needed.
-                  } else {
-                    // Show an error message or handle the case where no option is selected or answer is provided.
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(builder: (context) => ForgotPassNew()),
+                    // );
                   }
                 },
                 style: ElevatedButton.styleFrom(
