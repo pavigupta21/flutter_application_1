@@ -27,8 +27,11 @@ class _LoginPageState extends State<LoginPage> {
   registration() async {
     if (password != null) {
       try {
-        if (FirebaseAuth.instance.currentUser != null)
-          print(FirebaseAuth.instance.currentUser?.uid);
+        print(username + password);
+        final userCredential = await FirebaseAuth.instance
+            .signInWithEmailAndPassword(email: username, password: password);
+        final user = userCredential.user;
+        print(user?.uid);
       } catch (e) {
         print("Error occurred: $e");
         // Handle error
@@ -108,10 +111,7 @@ class _LoginPageState extends State<LoginPage> {
                             return null;
                           },
                           controller: _nameController,
-                          decoration: InputDecoration(
-                            labelText: 'Username',
-                            border: InputBorder.none,
-                          ),
+                          decoration: InputDecoration(labelText: 'Username'),
                         ),
                       ),
                       SizedBox(height: height * 0.01),
@@ -134,7 +134,6 @@ class _LoginPageState extends State<LoginPage> {
                           obscureText: true,
                           decoration: InputDecoration(
                             labelText: 'Password',
-                            border: InputBorder.none,
                           ),
                         ),
                       ),
@@ -145,16 +144,23 @@ class _LoginPageState extends State<LoginPage> {
                             print("Form is valid. Proceeding to login page.");
                             // Your existing login logic
                             try {
-                              final userDoc = await FirebaseFirestore.instance
-                                  .collection('users')
-                                  .doc(_nameController.text)
-                                  .get();
-                              if (userDoc.exists) {
+                              print(_nameController.text +
+                                  _passwordController.text);
+                              final userCredential = await FirebaseAuth.instance
+                                  .signInWithEmailAndPassword(
+                                      email: _nameController.text,
+                                      password: _passwordController.text);
+                              final user = userCredential.user;
+                              print(user?.uid);
+
+                              if (user.emailVerified) {
+                                print("User exists");
                                 final userData = userDoc.data();
                                 final storedPassword = userData?['password'];
                                 final role = userData?['role'];
                                 if (storedPassword ==
                                     _passwordController.text) {
+                                  print("Password is correct");
                                   if (role == 'student') {
                                     Navigator.push(
                                       context,
