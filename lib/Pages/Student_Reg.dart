@@ -183,12 +183,12 @@ class _StudentState extends State<Student> {
                           Password = _passwordController.text;
                           Phonenumber = _phoneNumberController.text;
                         });
+                        registration(); // Move registration call here
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => LoginPage()),
                         );
                       }
-                      registration();
                     },
                     child: Text('Register'),
                   ),

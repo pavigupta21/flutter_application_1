@@ -143,52 +143,25 @@ class _LoginPageState extends State<LoginPage> {
                         onPressed: () async {
                           if (_formkey.currentState!.validate()) {
                             print("Form is valid. Proceeding to login page.");
-                            if (_selectedRole == Choice.student) {
-                              // Check if user exists in Firestore and if password matches
-                              try {
-                                final userDoc = await FirebaseFirestore.instance
-                                    .collection('students')
-                                    .doc(_nameController.text)
-                                    .get();
-                                if (userDoc.exists) {
-                                  final userData = userDoc.data();
-                                  final storedPassword = userData?['password'];
-                                  if (storedPassword ==
-                                      _passwordController.text) {
+                            // Your existing login logic
+                            try {
+                              final userDoc = await FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(_nameController.text)
+                                  .get();
+                              if (userDoc.exists) {
+                                final userData = userDoc.data();
+                                final storedPassword = userData?['password'];
+                                final role = userData?['role'];
+                                if (storedPassword ==
+                                    _passwordController.text) {
+                                  if (role == 'student') {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => Doubt()),
                                     );
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text("Incorrect password"),
-                                      ),
-                                    );
-                                  }
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text("Username not found"),
-                                    ),
-                                  );
-                                }
-                              } catch (e) {
-                                print("Error occurred: $e");
-                              }
-                            } else if (_selectedRole == Choice.teacher) {
-                              // Similar checks for teacher role
-                              try {
-                                final userDoc = await FirebaseFirestore.instance
-                                    .collection('teachers')
-                                    .doc(_nameController.text)
-                                    .get();
-                                if (userDoc.exists) {
-                                  final userData = userDoc.data();
-                                  final storedPassword = userData?['password'];
-                                  if (storedPassword ==
-                                      _passwordController.text) {
+                                  } else if (role == 'teacher') {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -197,26 +170,26 @@ class _LoginPageState extends State<LoginPage> {
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text("Incorrect password"),
+                                        content: Text("Invalid role"),
                                       ),
                                     );
                                   }
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text("Username not found"),
+                                      content: Text("Incorrect password"),
                                     ),
                                   );
                                 }
-                              } catch (e) {
-                                print("Error occurred: $e");
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text("Username not found"),
+                                  ),
+                                );
                               }
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text("Account does not exist"),
-                                ),
-                              );
+                            } catch (e) {
+                              print("Error occurred: $e");
                             }
                           } else {
                             print("Form validation failed.");

@@ -228,7 +228,7 @@ class _TeacherState extends State<Teacher> {
                           Phonenumber = _phoneNumberController.text;
                           Subjectyouteach = _selectedSubject ?? '';
                         });
-
+                        registration(); // Move registration call here
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => LoginPage()),
@@ -236,7 +236,6 @@ class _TeacherState extends State<Teacher> {
                       } else {
                         print("Form validation failed.");
                       }
-                      registration();
                     },
                     child: Text('Register'),
                   ),
