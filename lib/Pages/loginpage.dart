@@ -146,53 +146,69 @@ class _LoginPageState extends State<LoginPage> {
                             try {
                               print(_nameController.text +
                                   _passwordController.text);
-                              final userCredential = await FirebaseAuth.instance
-                                  .signInWithEmailAndPassword(
-                                      email: _nameController.text,
-                                      password: _passwordController.text);
-                              final user = userCredential.user;
-                              print(user?.uid);
-
-                              if (user.emailVerified) {
-                                print("User exists");
-                                final userData = userDoc.data();
-                                final storedPassword = userData?['password'];
-                                final role = userData?['role'];
-                                if (storedPassword ==
-                                    _passwordController.text) {
-                                  print("Password is correct");
-                                  if (role == 'student') {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => Doubt()),
-                                    );
-                                  } else if (role == 'teacher') {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => Answer()),
-                                    );
+                              // final user = userCredential.user;
+                              // print(user?.uid);
+                              try {
+                                UserCredential userCredential =
+                                    await FirebaseAuth.instance
+                                        .signInWithEmailAndPassword(
+                                            email: _nameController.text,
+                                            password: _passwordController.text);
+                                User? user = userCredential.user;
+                                if (user != null) {
+                                  print("User exists");
+                                  final uid = user.uid;
+                                  final userDoc = await FirebaseFirestore
+                                      .instance
+                                      .collection('users')
+                                      .doc(uid)
+                                      .get();
+                                  if (userDoc.exists) {
+                                    final role = userDoc.data()?['role'];
+                                    if (role == 'student') {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => Doubt(),
+                                        ),
+                                      );
+                                    } else if (role == 'teacher') {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => Answer(),
+                                        ),
+                                      );
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text("Invalid role"),
+                                        ),
+                                      );
+                                    }
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text("Invalid role"),
+                                        content:
+                                            Text("User document not found"),
                                       ),
                                     );
                                   }
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text("Incorrect password"),
+                                      content: Text("User not found"),
                                     ),
                                   );
                                 }
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text("Username not found"),
-                                  ),
-                                );
+                              } on FirebaseAuthException catch (e) {
+                                if (e.code == 'user-not-found') {
+                                  print('No user found for that email.');
+                                } else if (e.code == 'wrong-password') {
+                                  print(
+                                      'Wrong password provided for that user.');
+                                }
                               }
                             } catch (e) {
                               print("Error occurred: $e");
