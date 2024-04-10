@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'FPN.dart';
+import 'package:email_validator/email_validator.dart';
 
 class ForgotPass extends StatefulWidget {
   const ForgotPass({Key? key}) : super(key: key);
@@ -10,9 +11,9 @@ class ForgotPass extends StatefulWidget {
 }
 
 class _ForgotPassState extends State<ForgotPass> {
-  String username = "";
+  String Email_ID = "";
   String answer = "";
-  TextEditingController _usernameController = TextEditingController();
+  TextEditingController _Email_IDController = TextEditingController();
   TextEditingController _answerController = TextEditingController();
   String _selectedItem = 'Who is your favourite author?';
   final _formKey = GlobalKey<FormState>();
@@ -48,13 +49,15 @@ class _ForgotPassState extends State<ForgotPass> {
                 child: TextFormField(
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return "Please enter Username";
+                      return "Please enter Email ID";
+                    } else if (!EmailValidator.validate(value)) {
+                      return "Please enter a valid email address";
                     }
                     return null;
                   },
-                  controller: _usernameController,
+                  controller: _Email_IDController,
                   decoration: InputDecoration(
-                    labelText: 'Username',
+                    labelText: 'Email ID',
                     filled: true,
                     fillColor: Colors.white,
                   ),
@@ -129,7 +132,7 @@ class _ForgotPassState extends State<ForgotPass> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     setState(() {
-                      username = _usernameController.text;
+                      Email_ID = _Email_IDController.text;
                       answer = _answerController.text;
                     });
                     Navigator.push(

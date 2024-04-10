@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'loginpage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ForgotPassNew extends StatefulWidget {
   const ForgotPassNew({Key? key}) : super(key: key);
@@ -9,6 +10,7 @@ class ForgotPassNew extends StatefulWidget {
 }
 
 class _ForgotPassNewState extends State<ForgotPassNew> {
+  final _auth = FirebaseAuth.instance;
   String newPassword = "";
   String confirmNewPassword = "";
   TextEditingController _newPasswordController = TextEditingController();
@@ -46,17 +48,23 @@ class _ForgotPassNewState extends State<ForgotPassNew> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "This field is required";
+                    } else if (value.length < 8) {
+                      return "Password must be at least 8 characters long";
+                    } else if (!value.contains(new RegExp(r'\d'))) {
+                      return "Password must contain at least one number";
                     }
                     return null;
                   },
                   controller: _newPasswordController,
                   decoration: InputDecoration(
-                    labelText: 'New Password',
-                    filled: true,
-                    fillColor: Colors.white,
+                    hintText: "New Password",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
+                  obscureText: true,
                 ),
-                SizedBox(height: height * 0.02),
+                SizedBox(height: height * 0.03),
                 TextFormField(
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -68,24 +76,44 @@ class _ForgotPassNewState extends State<ForgotPassNew> {
                   },
                   controller: _confirmNewPasswordController,
                   decoration: InputDecoration(
-                    labelText: 'Confirm New Password',
-                    filled: true,
-                    fillColor: Colors.white,
+                    hintText: "Confirm New Password",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
+                  obscureText: true,
                 ),
-                SizedBox(height: height * 0.02),
+                SizedBox(height: height * 0.05),
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      // Add your logic to handle the passwords
-                      String newPassword = _newPasswordController.text;
-                      String confirmNewPassword =
-                          _confirmNewPasswordController.text;
+                      newPassword = _newPasswordController.text;
+                      confirmNewPassword = _confirmNewPasswordController.text;
                       // You can use the 'newPassword' and 'confirmNewPassword' variables as needed.
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginPage()),
-                      );
+
+                      // Update the user's password
+                      try {
+                        User? user = _auth.currentUser;
+                        if (user != null) {
+                          user.updatePassword(newPassword);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Password updated successfully'),
+                            ),
+                          );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginPage()),
+                          );
+                        }
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Failed to update password'),
+                          ),
+                        );
+                      }
                     }
                   },
                   style: ElevatedButton.styleFrom(

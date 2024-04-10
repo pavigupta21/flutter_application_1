@@ -9,11 +9,11 @@ class ResetPass extends StatefulWidget {
 }
 
 class _ResetPassState extends State<ResetPass> {
-  String username = "";
+  String Email_ID = "";
   String currentPassword = "";
   String newPassword = "";
   String confirmNewPassword = "";
-  TextEditingController _usernameController = TextEditingController();
+  TextEditingController _Email_IDController = TextEditingController();
   TextEditingController _currentPasswordController = TextEditingController();
   TextEditingController _newPasswordController = TextEditingController();
   TextEditingController _confirmNewPasswordController = TextEditingController();
@@ -48,13 +48,13 @@ class _ResetPassState extends State<ResetPass> {
                   child: TextFormField(
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Please enter Username";
+                        return "Please enter Email ID";
                       }
                       return null;
                     },
-                    controller: _usernameController,
+                    controller: _Email_IDController,
                     decoration: InputDecoration(
-                      labelText: 'Username',
+                      labelText: 'Email ID',
                       filled: true,
                       fillColor: Colors.white,
                     ),
@@ -128,7 +128,7 @@ class _ResetPassState extends State<ResetPass> {
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
                             setState(() {
-                              username = _usernameController.text;
+                              Email_ID = _Email_IDController.text;
                               currentPassword = _currentPasswordController.text;
                               newPassword = _newPasswordController.text;
                               confirmNewPassword =

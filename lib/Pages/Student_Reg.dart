@@ -26,13 +26,13 @@ class _StudentState extends State<Student> {
         UserCredential userCredential = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: EmailID, password: Password);
         await FirebaseFirestore.instance
-            .collection('students')
+            .collection('users')
             .doc(userCredential.user!.uid)
             .set({
           'username': Username,
           'phoneNumber': Phonenumber,
           'email': EmailID,
-          'role': 'student', // Assuming it's a student registration
+          'role': 'student',
         }); // Added missing semicolon here
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

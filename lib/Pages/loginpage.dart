@@ -6,6 +6,7 @@ import 'Student_pg.dart';
 import 'Teacher_pg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:email_validator/email_validator.dart';
 
 enum Choice {
   student,
@@ -24,6 +25,7 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController _nameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   final _formkey = GlobalKey<FormState>();
+
   registration() async {
     if (password != null) {
       try {
@@ -106,12 +108,12 @@ class _LoginPageState extends State<LoginPage> {
                         child: TextFormField(
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return "Please enter Username";
+                              return "Please enter Email ID";
                             }
                             return null;
                           },
                           controller: _nameController,
-                          decoration: InputDecoration(labelText: 'Username'),
+                          decoration: InputDecoration(labelText: 'Email ID'),
                         ),
                       ),
                       SizedBox(height: height * 0.01),
@@ -141,19 +143,18 @@ class _LoginPageState extends State<LoginPage> {
                       ElevatedButton(
                         onPressed: () async {
                           if (_formkey.currentState!.validate()) {
-                            print("Form is valid. Proceeding to login page.");
-                            // Your existing login logic
-                            try {
-                              print(_nameController.text +
-                                  _passwordController.text);
-                              // final user = userCredential.user;
-                              // print(user?.uid);
+                            String email = _nameController.text.trim();
+                            String password = _passwordController.text.trim();
+
+                            if (EmailValidator.validate(email) &&
+                                password.isNotEmpty) {
+                              print("Form is valid. Proceeding to login page.");
                               try {
+                                print('Email: $email, Password: $password');
                                 UserCredential userCredential =
                                     await FirebaseAuth.instance
                                         .signInWithEmailAndPassword(
-                                            email: _nameController.text,
-                                            password: _passwordController.text);
+                                            email: email, password: password);
                                 User? user = userCredential.user;
                                 if (user != null) {
                                   print("User exists");
@@ -202,16 +203,21 @@ class _LoginPageState extends State<LoginPage> {
                                     ),
                                   );
                                 }
-                              } on FirebaseAuthException catch (e) {
-                                if (e.code == 'user-not-found') {
-                                  print('No user found for that email.');
-                                } else if (e.code == 'wrong-password') {
-                                  print(
-                                      'Wrong password provided for that user.');
-                                }
+                              } catch (e) {
+                                print("Error occurred: $e");
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text("Invalid email or password"),
+                                  ),
+                                );
                               }
-                            } catch (e) {
-                              print("Error occurred: $e");
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      "Please enter a valid email and password"),
+                                ),
+                              );
                             }
                           } else {
                             print("Form validation failed.");
