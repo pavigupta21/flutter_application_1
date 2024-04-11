@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'loginpage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ResetPass extends StatefulWidget {
   const ResetPass({Key? key}) : super(key: key);
@@ -13,6 +14,7 @@ class _ResetPassState extends State<ResetPass> {
   String currentPassword = "";
   String newPassword = "";
   String confirmNewPassword = "";
+  String errorMessage = "";
   TextEditingController _Email_IDController = TextEditingController();
   TextEditingController _currentPasswordController = TextEditingController();
   TextEditingController _newPasswordController = TextEditingController();
@@ -55,6 +57,7 @@ class _ResetPassState extends State<ResetPass> {
                     controller: _Email_IDController,
                     decoration: InputDecoration(
                       labelText: 'Email ID',
+                      errorText: errorMessage,
                       filled: true,
                       fillColor: Colors.white,
                     ),
@@ -117,54 +120,25 @@ class _ResetPassState extends State<ResetPass> {
                     ),
                   ),
                 ),
-                SizedBox(height: height * 0.03),
-                // Buttons
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    SizedBox(
-                      width: width * 0.5,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            setState(() {
-                              Email_ID = _Email_IDController.text;
-                              currentPassword = _currentPasswordController.text;
-                              newPassword = _newPasswordController.text;
-                              confirmNewPassword =
-                                  _confirmNewPasswordController.text;
-                            });
-                            // You can use the variables as needed.
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => LoginPage(),
-                              ),
-                            );
-                          }
-                        },
-                        child: Text('Reset Password'),
-                      ),
-                    ),
-                    SizedBox(
-                      width: width * 0.35,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Add your logic for "Cancel" button
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LoginPage(),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Color.fromARGB(255, 218, 113, 113),
-                        ),
-                        child: Text('Cancel'),
-                      ),
-                    ),
-                  ],
+                SizedBox(height: height * 0.05),
+                // Update Button
+                ElevatedButton(
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      try {
+                        await resetPassword();
+                        showSnackBar("Password updated successfully", context);
+                      } catch (e) {
+                        errorMessage = e.toString();
+                        setState(() {});
+                      }
+                    }
+                  },
+                  child: Text('Reset'),
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.blueAccent,
+                    disabledForegroundColor: Colors.white,
+                  ),
                 ),
               ],
             ),
@@ -172,5 +146,29 @@ class _ResetPassState extends State<ResetPass> {
         ),
       ),
     );
+  }
+
+  void showSnackBar(String message, BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 3),
+      ),
+    );
+  }
+
+  Future<void> resetPassword() async {
+    try {
+      // Fetching the current user's details
+      var currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
+        throw ("Please login to update password");
+      }
+      // Updating the password
+      await FirebaseAuth.instance.currentUser!
+          .updatePassword(_newPasswordController.text);
+    } catch (e) {
+      throw (e);
+    }
   }
 }
