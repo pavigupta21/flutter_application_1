@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'Chatbox.dart';
 import 'loginpage.dart';
 
 class Answer extends StatefulWidget {
@@ -9,19 +12,7 @@ class Answer extends StatefulWidget {
 }
 
 class _AnswerState extends State<Answer> {
-  // Dummy data for levels
-  List<Level> levels = [
-    Level(number: 1, achieved: true),
-    Level(number: 2, achieved: false),
-    Level(number: 3, achieved: true),
-    Level(number: 4, achieved: false),
-    Level(number: 5, achieved: false),
-    Level(number: 6, achieved: true),
-    Level(number: 7, achieved: false),
-    Level(number: 8, achieved: true),
-    Level(number: 9, achieved: false),
-    Level(number: 10, achieved: true),
-  ];
+
 
   // Variable to store the filter status
   bool showAchievedLevels = true;
@@ -30,6 +21,107 @@ class _AnswerState extends State<Answer> {
   List<String> filterOptions = ['Ticked First', 'Unticked First'];
   String selectedFilterOption = 'Ticked First';
 
+  String username="";
+  String email="";
+  String phone="";
+
+  List<Map<String, dynamic>> doubtList=[];
+  List<Map<String, dynamic>> studentList=[];
+  User? user = FirebaseAuth.instance.currentUser;
+
+  String getUserFromId(String id){
+    String name="";
+    for(int i=0;i<studentList.length;i++){
+      if(studentList[i]['uid']==id){
+        name=studentList[i]['username'];
+  }
+    }
+    return name;
+  }
+
+  getUserInfo() async {
+
+
+    print(user?.uid);
+
+    DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(user?.uid).get();
+
+    // Check if the document exists
+    if (userDoc.exists) {
+      // Access the data from the document
+      Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+      // Now you can use userData as needed
+      print('User data: $userData');
+      username=userData['username'];
+      email=userData['email'];
+      phone=userData['phoneNumber'];
+
+      getDoubt(userData['subject'],user!.uid);
+
+
+    } else {
+      print('No user found with the ID');
+    }
+
+  }
+
+  getAllStudent() async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('users').get();
+      List<QueryDocumentSnapshot> userDocs = querySnapshot.docs;
+      List<Map<String, dynamic>> list = userDocs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+
+      for(int i =0;i<list.length;i++){
+        if(list[i]['role']=='student'){
+          studentList.add(list[i]);
+        }
+      }
+
+      getUserInfo();
+    } catch (e) {
+      throw Exception('Failed to fetch users: $e');
+    }
+  }
+
+  getDoubt(String sub,String id) async {
+    try {
+
+
+      Stream<QuerySnapshot> chatStream= await FirebaseFirestore.instance.collection('doubt').snapshots();
+
+      chatStream.listen((QuerySnapshot querySnapshot) {
+        List<QueryDocumentSnapshot> userDocs = querySnapshot.docs;
+        List<Map<String, dynamic>> list = userDocs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+
+        doubtList.clear();
+        for(int i =0;i<list.length;i++){
+          if(list[i]['subject']==sub&&list[i]['teacher']==id){
+            doubtList.add(list[i]);
+          }
+        }
+        if(mounted)
+          setState(() {});
+
+
+      }, onError: (error) {
+        print('Error fetching chat data: $error');
+      });
+
+
+      print('doubtList    ${doubtList}');
+    } catch (e) {
+      throw Exception('Failed to fetch users: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+
+    getAllStudent();
+
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     var size;
@@ -54,7 +146,7 @@ class _AnswerState extends State<Answer> {
               _showUserProfile();
             },
           ),
-          PopupMenuButton<String>(
+          /*PopupMenuButton<String>(
             onSelected: (String value) {
               _setFilterOption(value);
             },
@@ -66,7 +158,7 @@ class _AnswerState extends State<Answer> {
                 );
               }).toList();
             },
-          ),
+          ),*/
         ],
       ),
       body: Container(
@@ -77,37 +169,25 @@ class _AnswerState extends State<Answer> {
           ),
         ),
         child: ListView.builder(
-          itemCount: levels.length,
+          itemCount: doubtList.length,
           itemBuilder: (context, index) {
-            return ListTile(
-              title: Row(
-                children: [
-                  Checkbox(
-                    value: levels[index].achieved,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        levels[index].achieved = value ?? false;
-                      });
-                    },
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      // Handle tapping on a level if needed
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                        levels[index].achieved ? Colors.green : Colors.red,
-                      ),
-                    ),
-                    child: Text(
-                      "Student ${levels[index].number}",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
+            return GestureDetector(
+              onTap: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Chat(doubtList[index]['id'])),
+                );
+              },
+              child: Card(
+                color: doubtList[index]['status'] == 0 ? Colors.red : Colors.green,
+                child: ListTile(
+                  title: Text(getUserFromId(doubtList[index]['student']),style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),),
+                  // Set the tile color based on the status
+
+                ),
               ),
             );
           },
@@ -127,9 +207,9 @@ class _AnswerState extends State<Answer> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Username: User123'),
-              Text('Email: user@example.com'),
-              Text('Phone No.: +1 123-456-7890'),
+              Text('Username: ${username}'),
+              Text('Email: ${email}'),
+              Text('Phone No.: ${phone}'),
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
@@ -146,7 +226,9 @@ class _AnswerState extends State<Answer> {
   }
 
   // Function to handle log out
-  void _logOut() {
+  Future<void> _logOut() async {
+
+    await FirebaseAuth.instance.signOut();
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => LoginPage()),
@@ -166,9 +248,9 @@ class _AnswerState extends State<Answer> {
   // Function to apply the selected filter
   void _applyFilter() {
     if (selectedFilterOption == 'Ticked First') {
-      levels.sort((a, b) => a.achieved ? -1 : 1);
+      //levels.sort((a, b) => a.achieved ? -1 : 1);
     } else {
-      levels.sort((a, b) => a.achieved ? 1 : -1);
+      //levels.sort((a, b) => a.achieved ? 1 : -1);
     }
   }
 }

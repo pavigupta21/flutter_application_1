@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'Ask_doubt.dart';
 import 'Doubt_Hist.dart';
@@ -14,10 +16,40 @@ class _DoubtState extends State<Doubt> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _opacityAnimation;
 
+  String username="";
+  String email="";
+  String phone="";
+
+  getUserInfo() async {
+
+    User? user = FirebaseAuth.instance.currentUser;
+    print(user?.uid);
+
+    DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(user?.uid).get();
+
+    // Check if the document exists
+    if (userDoc.exists) {
+      // Access the data from the document
+      Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+      // Now you can use userData as needed
+      print('User data: $userData');
+      username=userData['username'];
+      email=userData['email'];
+      phone=userData['phoneNumber'];
+      setState(() {
+
+      });
+
+    } else {
+      print('No user found with the ID');
+    }
+
+  }
+
   @override
   void initState() {
     super.initState();
-
+    getUserInfo();
     // Set up the animation controller
     _controller = AnimationController(
       duration: Duration(seconds: 2),
@@ -98,9 +130,9 @@ class _DoubtState extends State<Doubt> with SingleTickerProviderStateMixin {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Username: User123'),
-              Text('Email: user@example.com'),
-              Text('Phone No.: +1 123-456-7890'),
+              Text('Username: ${username}'),
+              Text('Email: ${email}'),
+              Text('Phone No.: ${phone}'),
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
@@ -117,7 +149,9 @@ class _DoubtState extends State<Doubt> with SingleTickerProviderStateMixin {
   }
 
   // Function to handle log out
-  void _logOut() {
+  Future<void> _logOut() async {
+
+    await FirebaseAuth.instance.signOut();
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => LoginPage()),
@@ -150,7 +184,7 @@ class _DoubtState extends State<Doubt> with SingleTickerProviderStateMixin {
                 ),
                 SizedBox(height: 8),
                 Text(
-                  'Username',
+                  '${username}',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,

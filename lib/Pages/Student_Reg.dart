@@ -29,6 +29,7 @@ class _StudentState extends State<Student> {
             .collection('users')
             .doc(userCredential.user!.uid)
             .set({
+          'uid': userCredential.user!.uid,
           'username': Username,
           'phoneNumber': Phonenumber,
           'email': EmailID,
@@ -184,10 +185,10 @@ class _StudentState extends State<Student> {
                           Phonenumber = _phoneNumberController.text;
                         });
                         registration(); // Move registration call here
-                        Navigator.push(
+                        /*Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => LoginPage()),
-                        );
+                        );*/
                       }
                     },
                     child: Text('Register'),

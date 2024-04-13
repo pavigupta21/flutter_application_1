@@ -167,14 +167,14 @@ class _LoginPageState extends State<LoginPage> {
                                   if (userDoc.exists) {
                                     final role = userDoc.data()?['role'];
                                     if (role == 'student') {
-                                      Navigator.push(
+                                      Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) => Doubt(),
                                         ),
                                       );
                                     } else if (role == 'teacher') {
-                                      Navigator.push(
+                                      Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) => Answer(),

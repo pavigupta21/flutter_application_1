@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../constants.dart';
 import 'choice.dart';
 import 'loginpage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -34,12 +35,15 @@ class _TeacherState extends State<Teacher> {
             .collection('users')
             .doc(userCredential.user!.uid)
             .set({
+          'uid': userCredential.user!.uid,
           'username': Username,
           'phoneNumber': Phonenumber,
           'email': EmailID,
           'role': 'teacher', // Set role here
           'subject': Subjectyouteach
         }); // Added closing parenthesis here
+
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("Registered successfully"),
@@ -208,7 +212,7 @@ class _TeacherState extends State<Teacher> {
                         }
                         return null;
                       },
-                      items: <String>['EM', 'BXE', 'phy', 'chem']
+                      items: subjects
                           .map((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
@@ -229,10 +233,7 @@ class _TeacherState extends State<Teacher> {
                           Subjectyouteach = _selectedSubject ?? '';
                         });
                         registration(); // Move registration call here
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => LoginPage()),
-                        );
+
                       } else {
                         print("Form validation failed.");
                       }

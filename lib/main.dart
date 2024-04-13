@@ -1,8 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:lottie/lottie.dart';
 import 'dart:async';
+import 'Pages/Student_pg.dart';
+import 'Pages/Teacher_pg.dart';
+import 'Pages/choice.dart';
 import 'Pages/loginpage.dart';
 
 void main() async {
@@ -32,6 +37,9 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
 
   bool _disposed = false;
 
+  bool isLogin=false;
+  bool isTeacher=false;
+
   @override
   void dispose() {
     _disposed = true;
@@ -42,6 +50,8 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+
+    getInfo();
     _controller = AnimationController(
       vsync: this,
       duration: Duration(seconds: 1), // Adjust the duration as needed
@@ -50,16 +60,70 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
 
     Timer(Duration(seconds: 7), () {
       if (!_disposed) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => LoginPage()),
-        );
+
+        if (FirebaseAuth.instance.currentUser == null) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => LoginPage()),
+          );
+        } else {
+          if(isTeacher){
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => Answer()),
+            );
+          }else{
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => Doubt()),
+            );
+          }
+
+        }
+
+
       }
     });
   }
 
+  getInfo() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      isLogin=true;
+    }
+
+    if(isLogin){
+      User? user = FirebaseAuth.instance.currentUser;
+      print(user?.uid);
+
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(user?.uid).get();
+
+      // Check if the document exists
+      if (userDoc.exists) {
+        // Access the data from the document
+        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+      if(userData['role']=="teacher"){
+        isTeacher=true;
+      }else{
+        isTeacher=false;
+      }
+
+      setState(() {});
+
+      } else {
+        print('No user found with the ID');
+      }
+
+
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+
+
+
+
+
     return AnimatedSplashScreen(
       splash: Column(
         children: [
@@ -87,7 +151,8 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
           ),
         ],
       ),
-      nextScreen: LoginPage(),
+      nextScreen: isLogin?isTeacher?Answer():Doubt():LoginPage(),
+      duration: 5000,
       splashIconSize: 190, // Adjust the size as needed
       backgroundColor: Colors.black,
     );
