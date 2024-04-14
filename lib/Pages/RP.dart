@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'loginpage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ResetPass extends StatefulWidget {
   const ResetPass({Key? key}) : super(key: key);
@@ -159,16 +160,25 @@ class _ResetPassState extends State<ResetPass> {
 
   Future<void> resetPassword() async {
     try {
-      // Fetching the current user's details
-      var currentUser = FirebaseAuth.instance.currentUser;
-      if (currentUser == null) {
-        throw ("Please login to update password");
+      String email = _Email_IDController.text.trim();
+      if (email.isEmpty) {
+        throw ("Please enter Email ID");
       }
-      // Updating the password
+      // Check if the user is registered in Firestore
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: email)
+          .get();
+      if (snapshot.docs.isEmpty) {
+        throw ("User not registered in Firestore");
+      }
+      // Update the user's password
       await FirebaseAuth.instance.currentUser!
           .updatePassword(_newPasswordController.text);
+      showSnackBar("Password updated successfully", context);
     } catch (e) {
-      throw (e);
+      errorMessage = e.toString();
+      setState(() {});
     }
   }
 }

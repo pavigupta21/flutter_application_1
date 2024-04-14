@@ -24,12 +24,11 @@ class _ForgotPassNewState extends State<ForgotPassNew> {
     var width = size.width;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Confirm New Password"), // Set the title here
-        backgroundColor: Colors.blueAccent, // Set the background color here
+        title: Text("Confirm New Password"),
+        backgroundColor: Colors.blueAccent,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            // Handle back button press here
             Navigator.pop(context);
           },
         ),
@@ -85,17 +84,16 @@ class _ForgotPassNewState extends State<ForgotPassNew> {
                 ),
                 SizedBox(height: height * 0.05),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       newPassword = _newPasswordController.text;
                       confirmNewPassword = _confirmNewPasswordController.text;
-                      // You can use the 'newPassword' and 'confirmNewPassword' variables as needed.
 
-                      // Update the user's password
                       try {
                         User? user = _auth.currentUser;
                         if (user != null) {
-                          user.updatePassword(newPassword);
+                          await user.updatePassword(
+                              newPassword); // Update the user's password
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text('Password updated successfully'),
@@ -118,9 +116,6 @@ class _ForgotPassNewState extends State<ForgotPassNew> {
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.blueAccent,
-                    // Set the button background color here
-                    disabledForegroundColor:
-                        Colors.white, // Set the text color here
                   ),
                   child: Text('Confirm'),
                 ),
