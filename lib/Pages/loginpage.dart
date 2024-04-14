@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'choice.dart';
 import 'FP.dart';
-import 'RP.dart';
 import 'Student_pg.dart';
 import 'Teacher_pg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -233,9 +232,7 @@ class _LoginPageState extends State<LoginPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          buildLink('forgot_password', 'Forgot Password'),
-                          SizedBox(width: width * 0.05),
-                          buildLink('reset_password', 'Reset Password'),
+                          buildLink('forgot_password', 'Forgot Password?'),
                         ],
                       ),
                       SizedBox(height: height * 0.01),
@@ -271,11 +268,6 @@ class _LoginPageState extends State<LoginPage> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => ForgotPass()),
-          );
-        } else if (route == 'reset_password') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ResetPass()),
           );
         }
       },

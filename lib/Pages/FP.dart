@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'FPN.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ForgotPass extends StatefulWidget {
   const ForgotPass({Key? key}) : super(key: key);
@@ -72,15 +72,26 @@ class _ForgotPassState extends State<ForgotPass> {
               ),
               SizedBox(height: height * 0.03),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     setState(() {
                       Email_ID = _Email_IDController.text;
                     });
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ForgotPassNew()),
-                    );
+                    try {
+                      await FirebaseAuth.instance
+                          .sendPasswordResetEmail(email: Email_ID);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Password reset email sent'),
+                        ),
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Failed to send password reset email'),
+                        ),
+                      );
+                    }
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -88,7 +99,7 @@ class _ForgotPassState extends State<ForgotPass> {
                   disabledForegroundColor: Colors.white,
                 ),
                 child: Text(
-                  'Next',
+                  'Send Password Reset Email',
                   style: TextStyle(fontSize: width * 0.04),
                 ),
               ),

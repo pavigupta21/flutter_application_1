@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'loginpage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -99,7 +99,7 @@ class _ForgotPassNewState extends State<ForgotPassNew> {
                               content: Text('Password updated successfully'),
                             ),
                           );
-                          Navigator.push(
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => LoginPage()),
@@ -126,4 +126,4 @@ class _ForgotPassNewState extends State<ForgotPassNew> {
       ),
     );
   }
-}
+}*/
