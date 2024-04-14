@@ -232,7 +232,7 @@ class _LoginPageState extends State<LoginPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          buildLink('forgot_password', 'Forgot Password?'),
+                          buildLink('forgot_password', 'Forgot/Reset Password'),
                         ],
                       ),
                       SizedBox(height: height * 0.01),

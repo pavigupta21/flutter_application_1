@@ -24,7 +24,7 @@ class _ForgotPassState extends State<ForgotPass> {
     width = size.width;
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Forgot Password?"),
+        title: const Text("Forgot/Reset Password"),
         backgroundColor: Colors.blueAccent,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
